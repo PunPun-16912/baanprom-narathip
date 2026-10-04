@@ -37,6 +37,46 @@ class ServiceAddress(Base):
     lng: Mapped[float] = mapped_column(Float)
 
 
+# REQ-FN-002, REQ-OP-002
+def haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    """คำนวณระยะทางระหว่างพิกัดสองจุดแบบ Haversine สำหรับงานรับตามเส้นทาง."""
+    from math import atan2, cos, radians, sin, sqrt
+
+    earth_radius_km = 6371.0
+    lat1_r = radians(lat1)
+    lat2_r = radians(lat2)
+    delta_lat = radians(lat2 - lat1)
+    delta_lng = radians(lng2 - lng1)
+
+    a = (
+        sin(delta_lat / 2) ** 2
+        + cos(lat1_r) * cos(lat2_r) * sin(delta_lng / 2) ** 2
+    )
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return earth_radius_km * c
+
+
+class ScrapRequest(Base):
+    __tablename__ = "scrap_requests"  # REQ-FN-002
+    id: Mapped[int] = mapped_column(primary_key=True)
+    customer_id: Mapped[int | None] = mapped_column(ForeignKey("customers.id"), nullable=True)
+    status: Mapped[str] = mapped_column(String(30), default="open")
+    geo_lat: Mapped[float] = mapped_column(Float)
+    geo_lng: Mapped[float] = mapped_column(Float)
+    scrap_type: Mapped[str] = mapped_column(String(50))
+    estimated_price: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class SalengLocation(Base):
+    __tablename__ = "saleng_locations"  # REQ-FN-002
+    id: Mapped[int] = mapped_column(primary_key=True)
+    saleng_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    lat: Mapped[float] = mapped_column(Float)
+    lng: Mapped[float] = mapped_column(Float)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
 class Technician(Base):
     __tablename__ = "technicians"
     id: Mapped[int] = mapped_column(primary_key=True)

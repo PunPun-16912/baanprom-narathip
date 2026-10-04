@@ -22,6 +22,11 @@ MAX_SERVICE_DISTANCE_KM = 15.0
 # REQ-FN-008 / AS-06 ค้นช่างว่างกี่วันข้างหน้า
 SEARCH_DAYS_AHEAD = 7
 
+# REQ-FN-002 / REQ-QA-002 รัศมี 5 กม. สำหรับงานตามเส้นทาง
+ROUTE_RADIUS_KM = 5.0
+ROUTE_GEO_INDEX_KEY = "route:scrap_requests"
+MAX_GPS_ERROR_PERCENT = 15.0
+
 # AC-07-04 (CR-01) ช่วงใกล้เคียงต้องเริ่มห่างจากช่วงที่เลือกไม่เกินกี่ชั่วโมง
 ALTERNATIVE_WINDOW_HOURS = 3
 

@@ -111,3 +111,29 @@ AI ถาม: ยอดมัดจำบนหน้าจอเอาจาก
 cd backend && pytest -v -k "AC_" 2>&1 | tee ../specs/002-booking/test-run.txt  ผล 15 passed, 1 skipped
 cd frontend && npm test  ผล 1 passed
 กรอก ac-results.md รอบที่ 2 และสรุป gaps.md 10 แถว
+
+## #35 | 4 ต.ค. 2569 | Copilot Chat (Agent) | /tasks specs/003-route/spec.md
+
+AI อ่าน spec.md, plan.md และ AGENTS.md ครบแล้ว แล้วสร้าง tasks.md v2 สำหรับ feature การรับงานตามเส้นทาง
+ผลลัพธ์:
+- รวม 10 task
+- 3 task รอ Q-01 (T-04, T-05, T-10)
+- task ที่ยากที่สุดคือ T-04 เนื่องจากต้องจัดการ race condition และ first-come policy ที่ยังไม่ได้ตัดสินใจชัดเจน
+- AC ที่ทดสอบยากที่สุดในสภาพแวดล้อมนักศึกษาคือ AC-04-05 และ AC-04-07 เพราะต้องจำลองผู้ใช้พร้อมกัน 200 คน และวัด p95 ให้ <= 3 วินาที
+- ไม่มีการเริ่มเขียนโค้ดหรือแก้ spec ในรอบนี้ ตามเงื่อนไขของ prompt /tasks
+
+## #36 | 4 ต.ค. 2569 | Copilot Chat (Agent) | /implement T-01 specs/003-route/tasks.md
+
+AI ตรวจเริ่มต้นแล้วพบว่า T-01 มีสถานะพร้อมทำ และไม่มี task ที่ต้องทำก่อน เหตุผลคือ T-01 เป็นฐานข้อมูลและ geo-index foundation สำหรับ REQ-FN-002
+ไฟล์ที่สร้าง/แก้:
+- backend/app/db/models.py
+- backend/app/config.py
+- backend/app/route/service.py
+- backend/app/route/__init__.py
+- backend/tests/test_AC_04_01_02_route_geo_index.py
+
+ผล test:
+- pytest backend/tests/test_AC_04_01_02_route_geo_index.py -q
+- ผล: 2 passed
+
+สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่พบความไม่ชัดใน task นี้ เพราะเฉพาะ T-01 เป็นฟoundation ของ geo search เท่านั้น
