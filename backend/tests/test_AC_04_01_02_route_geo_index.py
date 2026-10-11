@@ -49,3 +49,12 @@ def test_AC_04_02_route_distance_is_sorted_by_nearness():
     assert one < two
     assert one <= 0.8
     assert two <= 2.0
+
+
+def test_AC_04_06_haversine_distance_error_is_within_15_percent():
+    # Reference distances are the geodesic distances for these known coordinate pairs.
+    reference_km = 1.0
+    measured_km = haversine_km(0.0, 0.0, 0.0, 1 / 111.195)
+    error_percent = abs(measured_km - reference_km) / reference_km * 100
+
+    assert error_percent <= 15

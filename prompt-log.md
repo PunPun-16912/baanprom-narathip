@@ -137,3 +137,42 @@ AI ตรวจเริ่มต้นแล้วพบว่า T-01 มี�
 - ผล: 2 passed
 
 สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่พบความไม่ชัดใน task นี้ เพราะเฉพาะ T-01 เป็นฟoundation ของ geo search เท่านั้น
+
+## #37 | 11 ต.ค. 2569 | Copilot Chat (Agent) | ทำงานที่เหลือของ booking และ route
+
+คำสั่งทีม: "ทำที่เหลือให้ครบ"
+
+AI ถามและทีมยืนยัน:
+- Q-01: ใช้ First-come ผู้ claim atomic ได้ก่อนเป็นผู้รับงาน
+- Q-14: อนุญาตยกเลิก BR-01 R3 และคืนมัดจำเต็มจำนวน; ทีมอนุมัติบันทึกเป็น CR-03
+- Q-18: ระยะล็อก 10 นาที
+- Q-19: gateway-timeout 30 วินาทีตาม spec
+- Q-22: เก็บพิกัด แต่ก่อนรับงานส่งเฉพาะป้ายพื้นที่; หลังรับงานเปิดเผยแก่ผู้รับผิดชอบ
+- Q-23: ปลดล็อกอัตโนมัติเมื่อหมด HOLD_MINUTES
+- Geo-index: ใช้ SQL/Haversine ที่มีอยู่ ไม่เพิ่ม Redis
+- REQ-CON-003: ยังไม่บังคับน้ำหนักจนกว่าจะมีตัวเลขและข้อมูลน้ำหนัก
+- Thai-ID/DBD-ID: ทำ adapter แบบ fail closed; ไม่จำลองผลยืนยันเมื่อไม่มี provider/contract/credentials
+- REQ-FN-001: แสดง estimated_price เป็นค่าประเมินเท่านั้น; ราคากลางรายวันรอแหล่งข้อมูล
+- REQ-CON-002: R1 ไม่เรียก Maps API ตาม D-04-01; บันทึก quota เป็นข้อจำกัดก่อนเปิด integration
+
+ผลการทำงาน: เพิ่ม API/UI/test ของ route ตาม behavior ที่มีข้อมูลพร้อม, สร้าง route.feature และ ac-results, อัปเดต CR-03 และผลทดสอบให้สะท้อนข้อจำกัดที่ยังต้องทีมจัดเตรียม
+
+## #38 | 11 ต.ค. 2569 | Copilot Chat (Agent) | /implement T-09 specs/002-booking/tasks.md
+
+คำสั่งทีม: "ทำ 002 booking ให้ครบตาม spec"
+AI ถาม task ID ตามข้อกำหนด /implement และทีมเลือก T-09 (AC-07-08 แบบย่อส่วน) จากนั้นอนุญาตให้เปิด T-09 กลับเป็นพร้อมทำเพราะ test เดิมล้มเหลว และอนุญาตให้อัปเดตเอกสารที่จำเป็นเพื่อปิด task
+
+ไฟล์ที่สร้าง/แก้:
+- backend/tests/test_load_scaled.py
+- specs/002-booking/tasks.md
+- specs/002-booking/ac-results.md
+
+แก้ test ให้ใช้ฐาน SQLite แบบไฟล์ชั่วคราวและ session แยกตามคำขอ เพื่อไม่ให้ 20 thread แข่งขันบน connection เดียวของ SQLite in-memory; ยืนยันผลค้นหาทุกคำขอเทียบกับ baseline พร้อมวัดเวลา
+
+ผล test:
+- cd backend && pytest -q tests/test_load_scaled.py: 1 passed
+- cd backend && pytest -q -k 'AC_07': 15 passed, 9 deselected
+
+ผลจำกัด: เป็น test ย่อส่วน 20 คำขอตาม T-09 ไม่ใช่การตรวจรับ 500 ผู้ใช้; การทดสอบเต็มยังรอ CR-02 และเครื่องทดสอบตาม quality-requirements.md
+
+สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มีรายละเอียดพฤติกรรมที่กำกวมใน T-09; ทดสอบกับ SQLite แบบไฟล์ชั่วคราวเพื่อให้ยังใช้ข้อมูล seed เดิมและแยก connection ต่อคำขอ

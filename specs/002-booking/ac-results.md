@@ -1,36 +1,35 @@
-# ตารางผล AC หลังรัน test ทั้งชุด (specs/002-booking/test-run.txt)
+# ผลตรวจ Acceptance Criteria: UC-07 Booking
 
-รันวันที่ 4 ต.ค. 2569 | คำสั่ง: cd backend && pytest -v -k "AC_" | cd frontend && npm test
-สถานะที่ใช้: ผ่าน | ไม่ผ่าน | ยังไม่มี test | รอ Q-xx
+อัปเดต: 11 ต.ค. 2569 | อ้างอิง: `booking.feature` v1.3, `spec.md` v1.3 และ CR-03
 
-## รอบที่ 1 (ก่อนแก้ GAP-07)
+## ผลล่าสุด
 
-| AC ID | REQ ที่พิสูจน์ | test | task | ผล | หมายเหตุ |
-|---|---|---|---|---|---|
-| AC-07-01 | REQ-FN-008 | test_AC_07_01_booking_success | T-04 | ผ่าน | หลังเพิ่ม assert จำนวน Payment (GAP-06) |
-| AC-07-02 | REQ-FN-008, BR-02, BR-03 | test_AC_07_02_slot_not_rebookable | T-03 | ผ่าน | |
-| AC-07-03 | REQ-FN-012 | test_AC_07_03_notify_both_within_60s | T-07 | ผ่าน | |
-| AC-07-04 | REQ-FN-041 (CR-01) | test_AC_07_04_no_charge_when_slot_taken | T-02, T-04 | ผ่าน | พิสูจน์ชั้น 3: เปลี่ยน ALTERNATIVE_WINDOW_HOURS เป็น 1 แล้ว test พัง |
-| AC-07-04 (หน้าจอ) | REQ-FN-041 | AC-07-04.test.jsx | T-10 | ผ่าน | |
-| AC-07-05 | REQ-IF-001, REQ-IF-005 | test_AC_07_05_payment_timeout | T-05 | ไม่ผ่าน | assert timeout 30 วินาที แต่ config ใช้ 60 (GAP-07 สาเหตุ spec) |
-| AC-07-06 | REQ-IF-001 | test_AC_07_06_payment_declined | T-05 | ผ่าน | |
-| AC-07-07 | REQ-IF-005 | test_AC_07_07_inquiry_approved_no_double_charge | T-05 | ผ่าน | |
-| AC-07-08 | REQ-QA-003 | ไม่มี | T-09 | ยังไม่มี test | ต้องการผู้ใช้ 500 คน ทดสอบย่อส่วนตามที่ทีมตัดสิน ดู CR-02 |
-| AC-07-09 | REQ-SEC-004, REQ-PRV-002 | test_AC_07_09_phone_hidden_until_2h | T-08 | ผ่าน | พิสูจน์ชั้น 3: เปลี่ยน PHONE_REVEAL_HOURS เป็น 3 แล้ว test พัง |
-| AC-07-10 R1, R2, R4, R5, R6 | REQ-BR-001 | test_AC_07_10_refund (parametrize), _R6_not_allowed | T-06 | ผ่าน | |
-| AC-07-10 R3 | REQ-BR-001 | test_AC_07_10_refund_R3 (skip) | T-06 | รอ Q-14 | พฤติกรรมชั่วคราวตรวจด้วย _R3_temporary_behaviour ผ่าน |
+| AC ID | REQ / กฎ | Test | ผล | รายละเอียด |
+|---|---|---|---|---|
+| AC-07-01 | REQ-FN-008 | `test_AC_07_01_booking_success` | ผ่าน | จองสำเร็จ งานยืนยันแล้ว ช่วงเวลาถูกจอง และมีรายการชำระมัดจำเพียง 1 รายการ |
+| AC-07-02 | REQ-FN-008, BR-02 | `test_AC_07_02_slot_not_rebookable` | ผ่าน | ช่วงเวลาที่จองแล้วไม่ปรากฏเป็นช่วงว่างในการค้นหา |
+| AC-07-03 | REQ-FN-012 | `test_AC_07_03_notify_both_within_60s` | ผ่าน | มีข้อความถึงลูกค้าและช่างในคิว พร้อมกำหนดเวลาภายใน 60 วินาที |
+| AC-07-04 | REQ-FN-041, CR-01 | `test_AC_07_04_no_charge_when_slot_taken` | ผ่าน | เมื่อช่วงเวลาถูกจองก่อน ระบบไม่สร้างรายการชำระและเสนอช่วงใกล้เคียงอย่างน้อย 2 ตัวเลือกภายใน 3 ชั่วโมง |
+| AC-07-04 (หน้าจอ) | REQ-FN-041, CR-01 | `AC-07-04.test.jsx` | ผ่าน | แสดงข้อความช่วงเวลาถูกจองแล้วและตัวเลือกช่วงใกล้เคียงอย่างน้อย 2 ปุ่ม |
+| AC-07-05 | REQ-IF-001, REQ-IF-005 | `test_AC_07_05_payment_timeout` | ผ่าน | Gateway timeout แล้ว inquiry ด้วย reference เดิม; unknown ทำให้งานยกเลิกอัตโนมัติ ช่วงเวลาว่าง และไม่มีรายการชำระสำเร็จ |
+| AC-07-06 | REQ-IF-001 | `test_AC_07_06_payment_declined` | ผ่าน | Gateway ปฏิเสธแล้วงานยกเลิกอัตโนมัติ ช่วงเวลาว่าง และมีข้อความแจ้งลูกค้า |
+| AC-07-07 | REQ-IF-005 | `test_AC_07_07_inquiry_approved_no_double_charge` | ผ่าน | inquiry พบ approved แล้วงานยืนยัน มีรายการชำระสำเร็จรายการเดียว และไม่ authorize ซ้ำ |
+| AC-07-08 | REQ-QA-003 | `test_AC_07_08_search_under_load_scaled` | ผ่านแบบย่อส่วนเท่านั้น | ทดสอบ 20 คำขอพร้อมกัน; ทุกคำขอได้ผลค้นหาตรง baseline และอย่างน้อย 19/20 ตอบไม่เกิน 2 วินาที ยังไม่ใช่ผลตรวจรับตาม 500 ผู้ใช้ |
+| AC-07-09 | REQ-SEC-004, REQ-PRV-002 | `test_AC_07_09_phone_hidden_until_2h` | ผ่าน | เบอร์ถูกซ่อนก่อน 2 ชั่วโมง เปิดเผยเมื่อถึงเวลา และไม่พบเบอร์ใน log |
+| AC-07-10 R1 | REQ-BR-001, BR-01 | `test_AC_07_10_refund[R1-…]` | ผ่าน | ยกเลิกล่วงหน้าอย่างน้อย 24 ชั่วโมง คืน 350 บาท |
+| AC-07-10 R2 | REQ-BR-001, BR-01 | `test_AC_07_10_refund[R2-…]` | ผ่าน | ยกเลิกก่อนนัดน้อยกว่า 24 ชั่วโมง คืน 180 บาทจากมัดจำ 350 บาท |
+| AC-07-10 R3 | REQ-BR-001, BR-01, CR-03 | `test_AC_07_10_refund_R3` | ผ่าน | ยกเลิกขณะช่างกำลังเดินทางได้ และคืนมัดจำเต็มจำนวนตาม CR-03 |
+| AC-07-10 R4 | REQ-BR-001, BR-01 | `test_AC_07_10_refund[R4-…]` | ผ่าน | งานกำลังหาช่างใหม่และยกเลิกโดยระบบ คืน 350 บาท |
+| AC-07-10 R5 | REQ-BR-001, BR-01 | `test_AC_07_10_refund[R5-…]` | ผ่าน | ยกเลิกอัตโนมัติ ไม่มีรายการคืนมัดจำ (0 บาท) |
+| AC-07-10 R6 | REQ-BR-001, BR-01 | `test_AC_07_10_refund_R6_not_allowed` | ผ่าน | งานกำลังดำเนินการยกเลิกไม่ได้ ระบบตอบ 409 และคงสถานะงาน |
 
-สรุปรอบที่ 1: AC ทั้งหมด 10 ข้อ | มี test 9 | ผ่าน 8 | ไม่ผ่าน 1 | ยังไม่มี test 1 | รอ Q 1 (R3 ของ AC-07-10)
-ไม่ผ่านเพราะสเปก 1 (GAP-07) | เพราะ AI 0 | เพราะ test 0
-สเปกคุม AI ได้: 8 ใน 9 AC ที่มี test จุดที่หลุดคือ timeout ของ gateway ที่สเปก (30 วินาที) กับ Interface Contract IF-01 ที่ AI อ่าน (60 วินาที) บอกไม่ตรงกัน
+## คำสั่งและผลทดสอบ
 
-## รอบที่ 2 (หลังตั้ง GATEWAY_TIMEOUT_SECONDS ตาม spec ข้อ 9 = 30 และเพิ่ม test ย่อส่วน T-09) = test-run.txt ปัจจุบัน
+- Backend: `cd backend && pytest -q -k 'AC_07'` — **15 passed, 9 deselected**.
+- Frontend เฉพาะ booking: `cd frontend && npm test -- --run src/__tests__/AC-07-04.test.jsx` — **1 passed**.
+- Frontend ทั้งชุด: มี test ของ route `AC-04-03` ล้มเหลว 1 รายการ เนื่องจากหา `แขวงตลาดน้อย` ไม่พบ; เป็น test นอกขอบเขต 002-booking จึงไม่นับรวมผล AC ของ booking
 
-| AC ID | ผล | เปลี่ยนจากรอบ 1 |
-|---|---|---|
-| AC-07-05 | ผ่าน | แก้ config ให้ตรง spec (ค่าจริงรอ Q-19) |
-| AC-07-08 | ผ่าน (ย่อส่วน 20 จาก 500, 19 ใน 20 ไม่เกิน 2 วินาที) | เพิ่ม test_AC_07_08_search_under_load_scaled ไม่ใช่ผลตรวจรับจริง รอ CR-02 |
-| อื่น ๆ | เหมือนรอบ 1 | |
+## ข้อจำกัดและสถานะตรวจรับ
 
-สรุปรอบที่ 2: AC ทั้งหมด 10 ข้อ | มี test 10 | ผ่าน 9 (1 ข้อเป็นแบบย่อส่วน) | ไม่ผ่าน 0 | รอ Q 1 (R3)
-pytest: 15 passed, 1 skipped | vitest: 1 passed
+- AC-07-08 ผ่านเฉพาะ test ย่อส่วน 20 คำขอ ไม่ได้ยืนยัน p95 ที่ผู้ใช้พร้อมกัน 500 คนตาม REQ-QA-003; การตรวจรับเต็มยังต้องใช้เครื่องทดสอบและแนวทางที่ทีมอนุมัติผ่าน CR-02 ตาม `quality-requirements.md`.
+- ผลทดสอบอื่นในตารางเป็นผลจาก test suite ปัจจุบัน โดย AC-07-10 R3 ใช้การเปลี่ยนแปลงที่อนุมัติแล้วใน CR-03.

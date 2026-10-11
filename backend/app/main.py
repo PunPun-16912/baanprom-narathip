@@ -5,14 +5,17 @@ from fastapi import FastAPI
 
 from app.db.session import engine
 from app.db.migrations.m001_init import upgrade
+from app.db.migrations.m002_route import upgrade as upgrade_route
 from app.technicians.router import router as technicians_router
 from app.booking.router import router as booking_router
 from app.refund.router import router as refund_router
+from app.route.router import router as route_router
 from app.notify.queue import queue
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     upgrade(engine)  # T-01 สร้างตารางถ้ายังไม่มี
+    upgrade_route(engine)
     yield
 
 
@@ -20,6 +23,7 @@ app = FastAPI(title="บ้านพร้อม R1 - UC-07 จองงาน�
 app.include_router(technicians_router)
 app.include_router(booking_router)
 app.include_router(refund_router)
+app.include_router(route_router)
 
 
 @app.get("/notifications/queue")

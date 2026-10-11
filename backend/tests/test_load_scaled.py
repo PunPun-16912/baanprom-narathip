@@ -3,17 +3,43 @@
 import time
 from concurrent.futures import ThreadPoolExecutor
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.db import session as db_session
 from tests.conftest import NOW
 
 
 # รองรับ AC-07-08 (REQ-QA-003) ฉบับย่อส่วน
-def test_AC_07_08_search_under_load_scaled(client, db, seed):
+def test_AC_07_08_search_under_load_scaled(
+    client, db, seed, tmp_path, monkeypatch, request
+):
+    engine = create_engine(
+        f"sqlite:///{tmp_path / 'load-test.sqlite3'}",
+        connect_args={"check_same_thread": False},
+    )
+    request.addfinalizer(engine.dispose)
+    source_connection = db.connection().connection.driver_connection
+    with engine.raw_connection() as target_connection:
+        source_connection.backup(target_connection.driver_connection)
+    monkeypatch.setattr(
+        db_session,
+        "SessionLocal",
+        sessionmaker(bind=engine, autoflush=False, expire_on_commit=False),
+    )
+
     url = f"/technicians?category=ประปา&address_id={seed['addr'].id}&now={NOW.isoformat()}"
+    baseline = client.get(url)
+    assert baseline.status_code == 200
+    expected_results = baseline.json()
 
     def timed_get(_):
         t0 = time.perf_counter()
         r = client.get(url)
-        return r.status_code == 200, time.perf_counter() - t0
+        return (
+            r.status_code == 200 and r.json() == expected_results,
+            time.perf_counter() - t0,
+        )
 
     # Given ลูกค้า 20 คน (ย่อจาก 500) ส่งคำขอค้นหาช่างพร้อมกัน
     with ThreadPoolExecutor(max_workers=20) as pool:

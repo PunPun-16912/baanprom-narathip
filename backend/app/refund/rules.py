@@ -23,8 +23,8 @@ def decide(status: str, cancelled_by: str, scheduled_start: datetime, now: datet
     if status == "confirmed" and cancelled_by == "customer":
         return Decision("R2", "cancelled", round_up_tens(deposit / 2))
     if status == "en_route" and cancelled_by == "customer":
-        # Q-14 ยังไม่ตอบ พฤติกรรมชั่วคราวตาม spec ข้อ 9: ไม่อนุญาตให้ยกเลิก
-        return Decision("R3", "pending_question", None)
+        # Q-14: คืนมัดจำเต็มจำนวนเมื่อลูกค้ายกเลิกระหว่างช่างเดินทาง
+        return Decision("R3", "cancelled", deposit)
     if status == "rematching":
         return Decision("R4", "cancelled", deposit)
     if status == "pending_payment":

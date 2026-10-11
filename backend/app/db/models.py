@@ -63,9 +63,12 @@ class ScrapRequest(Base):
     status: Mapped[str] = mapped_column(String(30), default="open")
     geo_lat: Mapped[float] = mapped_column(Float)
     geo_lng: Mapped[float] = mapped_column(Float)
+    area_label: Mapped[str | None] = mapped_column(String(120), nullable=True)
     scrap_type: Mapped[str] = mapped_column(String(50))
     estimated_price: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    accepted_by_saleng_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
 
 class SalengLocation(Base):

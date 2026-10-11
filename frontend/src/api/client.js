@@ -29,4 +29,17 @@ export const api = {
       body: JSON.stringify({ customer_id: customerId, slot_id: slotId, address_id: addressId, category }),
     }))
   },
+  // REQ-FN-002 ค้นคำขอภายในรัศมี 5 กม. โดยไม่ส่งพิกัดบ้านก่อนรับงาน
+  async getRouteRequests({ lat, lng }) {
+    const q = new URLSearchParams({ lat: String(lat), lng: String(lng) })
+    return readJson(await fetch(`${BASE}/route/requests?${q}`))
+  },
+  // REQ-BR-002 รับคำขอได้เพียงซาเล้งเดียว
+  async acceptRouteRequest({ requestId, salengId }) {
+    return readJson(await fetch(`${BASE}/route/requests/${requestId}/accept`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ saleng_id: salengId }),
+    }))
+  },
 }

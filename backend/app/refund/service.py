@@ -12,8 +12,6 @@ class CancelRejected(Exception):
 
 def cancel_job(db, job: Job, cancelled_by: str, now: datetime) -> tuple[Decision, Refund | None]:
     d = decide(job.status, cancelled_by, job.scheduled_start, now, job.deposit_amount)
-    if d.outcome == "pending_question":
-        raise CancelRejected(d, "ยกเลิกขณะช่างกำลังเดินทางยังไม่เปิดให้ทำ กรุณาติดต่อ call center (รอ Q-14)")
     if d.outcome == "not_allowed":
         raise CancelRejected(d, "งานที่กำลังดำเนินงานหรือเสร็จสิ้นแล้วยกเลิกไม่ได้ กรุณาใช้กระบวนการร้องเรียน")
     set_status(db, job, d.outcome, now)
